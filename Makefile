@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++23
+CXXFLAGS = -Wall -Wextra -Wpedantic -std=c++23 -lnvidia-ml
 SRCDIR = src
 INCDIR = include
 BUILDDIR = build

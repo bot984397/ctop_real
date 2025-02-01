@@ -1,5 +1,5 @@
-#ifndef __CTOP_UTIL_H__
-#define __CTOP_UTIL_H__
+#ifndef __CTOP_UI_UTIL_H__
+#define __CTOP_UI_UTIL_H__
 
 #include <functional>
 #include <cstddef>
@@ -29,4 +29,4 @@ namespace Ui {
    void draw_corners(Vec2 pos, Vec2 size, bool rounded);
 }
 
-#endif // __CTOP_UTIL_H__
+#endif // __CTOP_UI_UTIL_H__

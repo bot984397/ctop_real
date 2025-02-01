@@ -1,16 +1,30 @@
 #ifndef __CTOP_CPU_H__
 #define __CTOP_CPU_H__
 
-#include "../ui/box.h"
+#include "../core/aggregator.h"
+#include "../ui/container.h"
 
-class CpuBox : public IBox {
+class CpuAggregator : public IResourceAggregator {
+private:
+
 public:
-   CpuBox(size_t pos, Vec2 size, bool active)
-      : IBox("cpu", pos, size, active) {}
+   CpuAggregator();
 
-   bool set_keybind(char key, std::function<void()> func) override;
-   bool set_clickbind(Vec2 pos, std::function<void()> func) override;
+   bool init() override;
+   void aggregate() override;
+};
+
+class CpuContainer : public IContainer {
+private:
+   CpuAggregator aggregator;
+
+public:
+   CpuContainer();
+
+   bool init() noexcept override;
+   void collect() noexcept override;
    void draw() const noexcept override;
+   void process_key() noexcept override;
 };
 
 #endif // __CTOP_CPU_H__

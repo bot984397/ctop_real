@@ -1,13 +1,31 @@
 #include "../../include/core/cpu.h"
 
-bool CpuBox::set_keybind(char key, std::function<void()> func) {
-   return false;
+#include <iostream>
+
+CpuAggregator::CpuAggregator() : IResourceAggregator() {}
+
+bool CpuAggregator::init() {
+   return true;
 }
 
-bool CpuBox::set_clickbind(Vec2 pos, std::function<void()> func) {
-   return false;
+void CpuAggregator::aggregate() {
+
 }
 
-void CpuBox::draw() const noexcept {
+CpuContainer::CpuContainer() : IContainer() {}
+
+bool CpuContainer::init() noexcept {
+   return aggregator.init();
+}
+
+void CpuContainer::collect() noexcept {
+   aggregator.aggregate();
+}
+
+void CpuContainer::draw() const noexcept {
+
+}
+
+void CpuContainer::process_key() noexcept {
 
 }

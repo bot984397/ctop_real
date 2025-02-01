@@ -4,10 +4,11 @@
 
 #include <iostream>
 
-SysBox::SysBox(bool top, Vec2 size) : IBox("", 0, size, true) {
+//SysBox::SysBox(bool top, Vec2 size) : IBox("", Vec2(0, 0), size, true) {
 
-}
+//}
 
+/*
 bool SysBox::set_keybind(char key, std::function<void()> func) {
    return false;
 }
@@ -15,11 +16,14 @@ bool SysBox::set_keybind(char key, std::function<void()> func) {
 bool SysBox::set_clickbind(Vec2 pos, std::function<void()> func) {
    return false;
 }
+*/
 
+/*
 void SysBox::prepare() noexcept {
-   m_box = Term::draw_box(Vec2(0, 0), m_size.x, 3, true, 61);
+   //m_box = Term::draw_box(m_title, Vec2(0, 0), m_size.x, 2, true, 255, 255, 255);
 }
 
 void SysBox::draw() const noexcept {
    std::cout << m_box << std::flush;
 }
+*/

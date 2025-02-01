@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 
+/*
 bool InputProcessor::read_to_buffer() {
    if (m_buffer_pos < m_buffer_size) {
       return true;
@@ -92,3 +93,4 @@ std::optional<InputEvent> InputProcessor::read_event() {
 
    return InputEvent{InputEvent::Type::Key, c};
 }
+*/

@@ -15,7 +15,7 @@
 #include <cstring>
 #include <fstream>
 
-#include "../ui/box.h"
+#include "../ui/container.h"
 #include "../../include/core/input.h"
 
 class SystemInformer {
@@ -26,20 +26,23 @@ private:
    std::condition_variable m_cv;
    std::atomic<bool> m_stop_requested{false};
 
-   std::chrono::milliseconds m_interval{100};
+   std::chrono::milliseconds m_interval{1000};
    std::chrono::steady_clock::time_point m_next_execution;
 
    std::thread m_monitor_thread;
 
-   size_t m_term_w;
-   size_t m_term_h;
+   size_t m_real_width;
+   size_t m_real_height;
+
+   size_t m_required_width;
+   size_t m_required_height;
 
    void test_draw();
    void monitor_task();
 
    void get_term_size();
 
-   std::vector<std::unique_ptr<IBox>> m_boxes;
+   std::vector<std::unique_ptr<IContainer>> m_boxes;
 public:
    SystemInformer();
    ~SystemInformer();
@@ -64,6 +67,6 @@ public:
    void draw_size_error_screen();
 };
 
-static SystemInformer* g_monitor = nullptr;
+extern SystemInformer* g_monitor;
 
 #endif // __CORE_CTOP_H__

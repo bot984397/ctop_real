@@ -4,30 +4,27 @@
 
 #include "../../include/core/ctop.h"
 #include "../../include/core/term.h"
-#include "../../include/ui/box.h"
+#include "../../include/ui/container.h"
+
+#include "../../include/core/proc.h"
 #include "../../include/core/cpu.h"
-#include "../../include/core/mem.h"
-#include "../../include/core/sys.h"
+#include "../../include/core/gpu.h"
 
-/*
-SystemInformer::SystemInformer() {
-   m_boxes.push_back(std::make_unique<CpuBox>(0, Vec2(1,1), true));
-   m_boxes.push_back(std::make_unique<MemBox>(0, Vec2(1,1), true));
-}
-*/
-
-void clear_screen() {
-   const char* clear = "\033[2J\033[H";
-   write(STDOUT_FILENO, clear, strlen(clear));
-}
+SystemInformer* g_monitor;
 
 SystemInformer::SystemInformer() {
    get_term_size();
 
    init();
-   clear_screen();
+   Term::clear_screen_im();
+   Term::paint_screen_im(40, 42, 54);
 
-   m_boxes.push_back(std::make_unique<SysBox>(true, Vec2(m_term_w, m_term_h)));
+   m_required_width = 120;
+   m_required_height = 30;
+
+   m_boxes.push_back(std::make_unique<CpuContainer>());
+   m_boxes.push_back(std::make_unique<GpuContainer>());
+   m_boxes.push_back(std::make_unique<ProcContainer>());
 
    m_next_execution = std::chrono::steady_clock::now() + m_interval;
    m_monitor_thread = std::thread(&SystemInformer::monitor_task, this);
@@ -37,8 +34,8 @@ SystemInformer::SystemInformer() {
 void SystemInformer::get_term_size() {
    struct winsize w;
    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-   m_term_w = w.ws_col;
-   m_term_h = w.ws_row;
+   m_real_width = w.ws_col;
+   m_real_height = w.ws_row;
 }
 
 SystemInformer::~SystemInformer() {
@@ -76,32 +73,14 @@ void SystemInformer::stop() noexcept {
    if (m_monitor_thread.joinable()) {
       m_monitor_thread.join();
    }
+   //Term::clear_screen_im();
+   std::cout << Term::E::r << std::flush;
 }
 
 void SystemInformer::aggregate() {
    for (auto& box : m_boxes) {
-      //box->aggregate();
+      box->collect();
    }
-}
-
-void SystemInformer::draw() {
-   clear_screen();
-   if (m_term_w < 30 || m_term_h < 20) {
-      draw_size_error_screen();
-      return;
-   }
-
-   for (auto& box : m_boxes) {
-      box->prepare();
-      box->draw();
-   }
-
-}
-
-void SystemInformer::draw_size_error_screen() {
-   clear_screen();
-   Term::M::abs(0, 0);
-   std::cout << "width: " << m_term_w << " height: " << m_term_h << std::flush;
 }
 
 void print_info() {
@@ -114,6 +93,7 @@ char getch_raw() {
 }
 
 void SystemInformer::sigh(int sig) {
+   if (sig == 0) {}
    get_term_size();
    draw();
 }
@@ -128,7 +108,7 @@ int main(int argc, char* argv[]) {
       return 1;
    }
 
-   SystemInformer systemInformer;
+   auto systemInformer = SystemInformer();
    g_monitor = &systemInformer;
    bool stop_requested = false;
 
@@ -137,7 +117,6 @@ int main(int argc, char* argv[]) {
    std::ofstream file;
    while(!stop_requested) {
       char input = getch_raw();
-      std::cout << input << std::endl;
       switch (input) {
          case '1':
             systemInformer.update_interval(std::chrono::milliseconds(100));
